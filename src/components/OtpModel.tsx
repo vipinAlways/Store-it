@@ -26,19 +26,23 @@ const OtpModel = ({
   email: string;
   accountId: string;
 }) => {
+  const accId = accountId
   const [isOpen, setIsOpen] = useState(true);
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
+  console.log(accId,'dekh hian kya ');
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const sessionId = await verifySecret({ accountId, password });
-        console.log('skjdlksldj');
-      if (!sessionId) {
-        router.push('/');
+      if (accId === undefined) {
+        throw new Error('account ai hi nahi aa rahi ')
+      }
+      const sessionId = await verifySecret({ accountId:accId, password:password });
+      ;
+      if (sessionId) {
+        router.push("/");
       }
     } catch (error) {
       console.log(error, "failed to verify otp");
@@ -47,7 +51,7 @@ const OtpModel = ({
   };
 
   const handleResendOtp = async () => {
-    await sendEmailOtp({email:email})
+    await sendEmailOtp({ email: email });
   };
   return (
     <>

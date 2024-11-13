@@ -18,50 +18,58 @@ import Image from "next/image";
 import Link from "next/link";
 import { createAccount } from "@/lib/action/user.action";
 import OtpModel from "./OtpModel";
-
 type formType = "sign-in" | "sign-up";
 
-
-
-const authForms = (formType:formType)=>{
-    return z.object({
-        email:z.string().email(),
-        fullname:formType === 'sign-up' ? z.string().min(2).max(50) : z.string().optional(),
-        
-    })
-}
+const authForms = (formType: formType) => {
+  return z.object({
+    email: z.string().email(),
+    fullname:
+      formType === "sign-up"
+        ? z.string().min(2).max(50)
+        : z.string().optional(),
+  });
+};
 
 const AuthForm = ({ type }: { type: formType }) => {
-    const [isLoading, setIsLoading] = useState(false)
-    const [errorMessage, seterrorMessage] = useState('')
-    const [accountId, setAccountId] = useState(null)
-    const formSchema = authForms(type)
-    
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, seterrorMessage] = useState("");
+  const [accountId, setAccountId] = useState('');
+  const formSchema = authForms(type);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullname: "",
-      email:""
+      email: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true)
-    seterrorMessage('')
+    setIsLoading(true);
+    seterrorMessage("");
     try {
-      const user= await createAccount({fullname:values.fullname ?? '',email:values.email ?? ''})
+      const user = await createAccount({
+        fullname: values.fullname ?? "",
+        email: values.email ?? "",
+      })
       
-      setAccountId(user.accounId)
+      
+      return setAccountId(user.accountId);
+
     } catch (error) {
-      seterrorMessage('failed to create acount')
-    }finally{
-      setIsLoading(false)
+      seterrorMessage("failed to create acount");
+    } finally {
+      setIsLoading(false);
     }
   };
+  console.log(accountId,'accccccc');
   return (
     <>
-     <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form h-screen" >
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="auth-form h-screen"
+        >
           <h1 className="form-title">
             {type === "sign-in" ? "Sign In" : "Sign Up"}
           </h1>
@@ -129,7 +137,7 @@ const AuthForm = ({ type }: { type: formType }) => {
             )}
           </Button>
 
-          {errorMessage && <p className="error-message">*{errorMessage}</p>}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
 
           <div className="body-2 flex justify-center">
             <p className="text-light-100">
@@ -148,8 +156,9 @@ const AuthForm = ({ type }: { type: formType }) => {
         </form>
       </Form>
 
-
-      {accountId !== null && <OtpModel email={form.getValues('email')} accountId={accountId ?? ''}/>}
+      {accountId !==''  && (
+        <OtpModel email={form.getValues("email")} accountId={accountId!} />
+      )}
     </>
   );
 };

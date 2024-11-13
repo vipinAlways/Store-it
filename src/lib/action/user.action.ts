@@ -63,7 +63,6 @@ export const createAccount = async ({
 
   return parseStrinGify({ accountId });
 };
-
 export const verifySecret = async ({
   accountId,
   password,
@@ -73,17 +72,21 @@ export const verifySecret = async ({
 }) => {
   try {
     const { account } = await createAdminClient();
-    const session = await account.createSession(accountId,password);
+    if (!account) {
+      throw new Error('their is no user')
+    }
+    console.log(accountId,'acount id',password,'passwrod hin');
+    const session = await account.createSession(accountId, password);
+
+    (await cookies()).set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
     
-    (await cookies())
-      .set("appwrite-session", session.secret, {
-        path: "/",
-        httpOnly: true,
-        sameSite: "strict",
-        secure: true,
-      });
-      return parseStrinGify({sessionId:session.$id})
+    return JSON.stringify({ sessionId: session.$id });
   } catch (error) {
-    handleError(error, "failed to vrerify");
+    handleError(error, "failed to verify");
   }
 };
