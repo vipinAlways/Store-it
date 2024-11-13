@@ -16,6 +16,8 @@ import {
 import { Input } from "./ui/input";
 import Image from "next/image";
 import Link from "next/link";
+import { createAccount } from "@/lib/action/user.action";
+import OtpModel from "./OtpModel";
 
 type formType = "sign-in" | "sign-up";
 
@@ -31,7 +33,8 @@ const authForms = (formType:formType)=>{
 
 const AuthForm = ({ type }: { type: formType }) => {
     const [isLoading, setIsLoading] = useState(false)
-    const [errorMessage, seterrorMessage] = useState(false)
+    const [errorMessage, seterrorMessage] = useState('')
+    const [accountId, setAccountId] = useState(null)
     const formSchema = authForms(type)
     
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,7 +46,17 @@ const AuthForm = ({ type }: { type: formType }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    setIsLoading(true)
+    seterrorMessage('')
+    try {
+      const user= await createAccount({fullname:values.fullname ?? '',email:values.email ?? ''})
+      
+      setAccountId(user.accounId)
+    } catch (error) {
+      seterrorMessage('failed to create acount')
+    }finally{
+      setIsLoading(false)
+    }
   };
   return (
     <>
@@ -134,6 +147,9 @@ const AuthForm = ({ type }: { type: formType }) => {
           </div>
         </form>
       </Form>
+
+
+      {accountId !== null && <OtpModel email={form.getValues('email')} accountId={accountId ?? ''}/>}
     </>
   );
 };
