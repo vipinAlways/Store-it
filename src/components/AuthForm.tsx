@@ -49,8 +49,8 @@ const AuthForm = ({ type }: { type: formType }) => {
     seterrorMessage("");
     try {
       const user = await createAccount({
-        fullname: values.fullname ?? "",
-        email: values.email ?? "",
+        fullname: values.fullname!,
+        email: values.email!,
       })
       
       
