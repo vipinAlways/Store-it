@@ -1,7 +1,7 @@
 "use server";
 
 import { ID, Query } from "node-appwrite";
-import { createAdminClient } from "../appwrite";
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
 import { parseStrinGify } from "../utils";
 
@@ -90,3 +90,24 @@ export const verifySecret = async ({
     handleError(error, "failed to verify");
   }
 };
+
+
+export const getCurrentUser = async()=>{
+  const {dataBase,account} = await createSessionClient()
+
+  const result = await account.get()
+  console.log(result,'result hain');
+  const user = await dataBase.listDocuments(
+    appwriteConfig.dataBaseId,
+    appwriteConfig.userCollectionId,
+    [Query.equal('accountId',result.$id)]
+
+    
+  )
+  
+  if(user.total <= 0) {
+    return null
+  }
+  console.log(parseStrinGify(user.documents[0]));
+  return parseStrinGify(user.documents[0])
+}
