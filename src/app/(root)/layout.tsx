@@ -13,12 +13,11 @@ const layout = async({children}: {children:React.ReactNode}) => {
     return redirect('/sign-in')
   } 
 
-  console.log(currentUser,'ye hain');
   return (
     <main className=" flex h-screen">
-      <Sidebar fullName={currentUser.fullname} email={currentUser.email}/>
+      <Sidebar {...currentUser}/>
       <section className="flex h-full flex-1 flex-col">
-        <MobileNavigation/> 
+        <MobileNavigation {...currentUser}/> 
         <Header/>
         
         <div className="main-content">{children}</div>

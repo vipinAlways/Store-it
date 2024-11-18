@@ -1,12 +1,12 @@
 'use client'
-import { avatarPlaceholderUrl, navItems } from "@/constants";
+import { navItems } from "@/constants";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const Sidebar = ({fullName,email}:{fullName :string,email:string}) => {
+const Sidebar = ({fullname,email}:{fullname :string,email:string}) => {
   const pathName = usePathname()
   return (
     <div>
@@ -71,9 +71,9 @@ const Sidebar = ({fullName,email}:{fullName :string,email:string}) => {
 
           <div className="hidden lg:block">
             <p className="subtitle-2 capitalize">
-              {fullName}
+              {fullname}
             </p>
-            <p className="subtitle-2 capitalize">
+            <p className="caption">
               {email}
             </p>
 
