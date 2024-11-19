@@ -10,7 +10,7 @@ const Sidebar = ({fullname,email}:{fullname :string,email:string}) => {
   const pathName = usePathname()
   return (
     <div>
-      <aside className="sidebar">
+      <aside className="sidebar max-md:justify-between max-md:h-full">
         <Link href="/">
           <Image
             src="/assets/icons/logo-full-brand.svg"
@@ -33,14 +33,14 @@ const Sidebar = ({fullname,email}:{fullname :string,email:string}) => {
             {
               navItems.map((item)=>{
                 const active = pathName === item.url
-                return <Link href={item.url} key={item.url} className="w-full">
+                return <Link href={item.url} key={item.url} className={cn("w-full",!active && "hover:scale-105 transition-all")}>
                     <li className={cn('sidebar-nav-item',active && 'shad-active')}>
                       <Image
                       src={item.icon}
                       alt='logo'
                       width={24}
                       height={24}
-                      className={cn('nav-icon',active && 'nav-icon-active')}
+                      className={cn('nav-icon',active && 'nav-icon-active',)}
                       />
                       <p className="hiddedn lg:block">{item.name}</p>
                     </li>

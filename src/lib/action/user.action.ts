@@ -75,7 +75,7 @@ export const verifySecret = async ({
     if (!account) {
       throw new Error('their is no user')
     }
-    console.log(accountId,'acount id',password,'passwrod hin');
+    
     const session = await account.createSession(accountId, password);
 
     (await cookies()).set("appwrite-session", session.secret, {
@@ -110,4 +110,15 @@ export const getCurrentUser = async()=>{
   }
   console.log(parseStrinGify(user.documents[0]));
   return parseStrinGify(user.documents[0])
+}
+
+
+const signOutUser = async()=>{
+
+  const {account} = await createSessionClient()
+try {
+  account.deleteSession('current')
+} catch (error) {
+    console.log(error);
+}
 }

@@ -1,11 +1,9 @@
-import React from 'react'
+import React from "react";
 
 const FileUploader = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div>
+    
+  </div>;
+};
 
-export default FileUploader
+export default FileUploader;
