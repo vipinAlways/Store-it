@@ -15,6 +15,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
+import { signOutUser } from "@/lib/action/user.action";
 
 interface porps {
   fullname: string;
@@ -101,10 +102,10 @@ const MobileNavigation = ({ fullname, email, accountId, ownerId }: porps) => {
             <Separator className="my-5 bg-light-200/20" />
 
             <div className="flex flex-col justify-between gap-5">
-              <FileUploader />
+              <FileUploader ownerId="" accountId={accountId} className="" />
               <Button
                 className="sign-out-button"
-                onClick={() => {}}
+                onClick={async() => await signOutUser()}
                 type="submit"
               >
                 <Image

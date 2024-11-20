@@ -6,6 +6,7 @@ import { appwriteConfig } from "../appwrite/config";
 import { parseStrinGify } from "../utils";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const getUserByEmail = async (email: string) => {
   const { dataBase } = await createAdminClient();
@@ -73,9 +74,9 @@ export const verifySecret = async ({
   try {
     const { account } = await createAdminClient();
     if (!account) {
-      throw new Error('their is no user')
+      throw new Error("their is no user");
     }
-    
+
     const session = await account.createSession(accountId, password);
 
     (await cookies()).set("appwrite-session", session.secret, {
@@ -84,41 +85,55 @@ export const verifySecret = async ({
       sameSite: "strict",
       secure: true,
     });
-    
+
     return JSON.stringify({ sessionId: session.$id });
   } catch (error) {
     handleError(error, "failed to verify");
   }
 };
 
+export const getCurrentUser = async () => {
+  const { dataBase, account } = await createSessionClient();
 
-export const getCurrentUser = async()=>{
-  const {dataBase,account} = await createSessionClient()
-
-  const result = await account.get()
-  console.log(result,'result hain');
+  const result = await account.get();
+  console.log(result, "result hain");
   const user = await dataBase.listDocuments(
     appwriteConfig.dataBaseId,
     appwriteConfig.userCollectionId,
-    [Query.equal('accountId',result.$id)]
+    [Query.equal("accountId", result.$id)]
+  );
 
-    
-  )
-  
-  if(user.total <= 0) {
-    return null
+  if (user.total <= 0) {
+    return null;
   }
   console.log(parseStrinGify(user.documents[0]));
-  return parseStrinGify(user.documents[0])
-}
+  return parseStrinGify(user.documents[0]);
+};
 
-
-const signOutUser = async()=>{
-
-  const {account} = await createSessionClient()
-try {
-  account.deleteSession('current')
-} catch (error) {
+export const signOutUser = async () => {
+  const { account } = await createSessionClient();
+  try {
+    account.deleteSession("current");
+    (await cookies()).delete("appwrite-session");
+  } catch (error) {
     console.log(error);
-}
+  }finally{
+    redirect("/sign-in")
+  }
+};
+
+export const signIn =async ({email}:{email:string})=>{
+      try {
+        const existingUser =await getUserByEmail(email);
+
+        if (existingUser) {
+          await sendEmailOtp({email})
+          return parseStrinGify({accountId :existingUser.accountId})
+        }
+
+        return parseStrinGify({accountId:null,error:"user NOt Found"})
+
+      } catch (error) {
+        handleError(error,'failed to sign in user')
+      }
 }
