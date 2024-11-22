@@ -17,8 +17,8 @@ const getUserByEmail = async (email: string) => {
   );
   return result.total > 0 ? result.documents[0] : null;
 };
-const handleError = (error: unknown, Message: string) => {
-  console.log(error, Message);
+export const handleError =async (error: unknown, Message: string) => {
+
   throw error;
 };
 
@@ -78,6 +78,7 @@ export const verifySecret = async ({
     }
 
     const session = await account.createSession(accountId, password);
+    console.log(session.$id);
 
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
@@ -117,23 +118,22 @@ export const signOutUser = async () => {
     (await cookies()).delete("appwrite-session");
   } catch (error) {
     console.log(error);
-  }finally{
-    redirect("/sign-in")
+  } finally {
+    redirect("/sign-in");
   }
 };
 
-export const signIn =async ({email}:{email:string})=>{
-      try {
-        const existingUser =await getUserByEmail(email);
+export const signIn = async ({ email }: { email: string }) => {
+  try {
+    const existingUser = await getUserByEmail(email);
 
-        if (existingUser) {
-          await sendEmailOtp({email})
-          return parseStrinGify({accountId :existingUser.accountId})
-        }
+    if (existingUser) {
+      await sendEmailOtp({ email });
+      return parseStrinGify({ accountId: existingUser.accountId });
+    }
 
-        return parseStrinGify({accountId:null,error:"user NOt Found"})
-
-      } catch (error) {
-        handleError(error,'failed to sign in user')
-      }
-}
+    return parseStrinGify({ accountId: null, error: "user NOt Found" });
+  } catch (error) {
+    handleError(error, "failed to sign in user");
+  }
+};
