@@ -5,6 +5,8 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { convertFileToUrl, getFileType } from "@/lib/utils";
 import Thumbnail from "./Thumbnail";
+import { MAX_FILE_SIZE } from "@/constants";
+import { useToast } from "@/hooks/use-toast";
 
 interface Props {
   ownerId: string;
@@ -13,9 +15,17 @@ interface Props {
 }
 
 const FileUploader = ({ ownerId, accountId }: Props) => {
+  const {toast}  = useToast()
   const [files, setfiles] = useState<File[]>([]);
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setfiles(acceptedFiles);
+    const uploadPromises = acceptedFiles.map(async (file:File) => {
+      if (file.size > MAX_FILE_SIZE) {
+        setfiles((prev)=> prev.filter((f)=>f.name !== file.name));
+
+
+      }
+    })
   }, []);
 
   const handleRemoveFile= (
@@ -24,6 +34,7 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
   ) => {
     e.stopPropagation();
     setfiles((prev) => prev.filter((file) => file.name !== fileName));
+
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
