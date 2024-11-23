@@ -7,6 +7,8 @@ import { convertFileToUrl, getFileType } from "@/lib/utils";
 import Thumbnail from "./Thumbnail";
 import { MAX_FILE_SIZE } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
+import { uploadFile } from "@/lib/action/file.action";
+import { usePathname } from "next/navigation";
 
 interface Props {
   ownerId: string;
@@ -15,26 +17,51 @@ interface Props {
 }
 
 const FileUploader = ({ ownerId, accountId }: Props) => {
-  const {toast}  = useToast()
+  const path = usePathname();
+  const { toast } = useToast();
   const [files, setfiles] = useState<File[]>([]);
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setfiles(acceptedFiles);
-    const uploadPromises = acceptedFiles.map(async (file:File) => {
-      if (file.size > MAX_FILE_SIZE) {
-        setfiles((prev)=> prev.filter((f)=>f.name !== file.name));
 
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      setfiles(acceptedFiles);
+      const uploadPromises = acceptedFiles.map(async (file: File) => {
+        if (file.size > MAX_FILE_SIZE) {
+          setfiles((prev) => prev.filter((f) => f.name !== file.name));
+          return toast({
+            title: "",
+            description: (
+              <p className="body-2 text-white">
+                <span className="font-semibold">{file.name}</span> is too large
+                Max file size is 50 MB
+              </p>
+            ),
+            className: "error-toast",
+          });
+        }
 
-      }
-    })
-  }, []);
+        return uploadFile({
+          file,
+          ownerId,
+          accountId,
+          path,
+        }).then((isuploadFile) => {
+          if (isuploadFile) {
+            setfiles((prev) => prev.filter((f) => f.name !== file.name));
+          }
+        });
+      });
 
-  const handleRemoveFile= (
+      await Promise.all(uploadPromises)
+    },
+    [ownerId, accountId, path]
+  );
+
+  const handleRemoveFile = (
     e: React.MouseEvent<HTMLImageElement>,
     fileName: string
   ) => {
     e.stopPropagation();
     setfiles((prev) => prev.filter((file) => file.name !== fileName));
-
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });

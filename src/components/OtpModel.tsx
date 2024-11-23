@@ -31,7 +31,7 @@ const OtpModel = ({
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  console.log(accId,'dekh hian kya ');
+  
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -45,7 +45,7 @@ const OtpModel = ({
         router.push("/");
       }
     } catch (error) {
-      console.log(error, "failed to verify otp");
+     throw new Error(`${error}`)
     }
     setIsLoading(false);
   };

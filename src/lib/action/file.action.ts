@@ -1,9 +1,9 @@
 "use server";
 
-import { ID } from "node-appwrite";
+import { ID, Models, Query } from "node-appwrite";
 import { createAdminClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
-import { handleError } from "./user.action";
+import { getCurrentUser, handleError } from "./user.action";
 import { InputFile } from "node-appwrite/file";
 import { constructFileUrl, getFileType, parseStrinGify } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -49,8 +49,41 @@ export const uploadFile = async ({
       });
 
     revalidatePath(path);
-    return parseStrinGify(newFile)
+    return parseStrinGify(newFile);
   } catch (error) {
     handleError(error, "failed to upload file");
+  }
+};
+
+const createQueries = (currentUser: Models.Document) => {
+  const queries = [
+    Query.or([
+      Query.equal("owner", currentUser.$id),
+      Query.contains("users", currentUser.email),
+    ]),
+  ];
+
+  return queries;
+};
+
+export const getFiles = async () => {
+  const { dataBase } = await createAdminClient();
+
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) throw new Error("user not find");
+
+    const queries = createQueries(currentUser);
+
+    const files = await dataBase.listDocuments(
+      appwriteConfig.dataBaseId,
+      appwriteConfig.fileCollectionId,
+      queries
+    );
+
+    return parseStrinGify(files);
+  } catch (error) {
+    handleError(error, "failed to fetch file");
   }
 };

@@ -78,7 +78,7 @@ export const verifySecret = async ({
     }
 
     const session = await account.createSession(accountId, password);
-    console.log(session.$id);
+    
 
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
@@ -97,7 +97,6 @@ export const getCurrentUser = async () => {
   const { dataBase, account } = await createSessionClient();
 
   const result = await account.get();
-  console.log(result, "result hain");
   const user = await dataBase.listDocuments(
     appwriteConfig.dataBaseId,
     appwriteConfig.userCollectionId,
@@ -107,7 +106,7 @@ export const getCurrentUser = async () => {
   if (user.total <= 0) {
     return null;
   }
-  console.log(parseStrinGify(user.documents[0]));
+ 
   return parseStrinGify(user.documents[0]);
 };
 
@@ -117,7 +116,7 @@ export const signOutUser = async () => {
     account.deleteSession("current");
     (await cookies()).delete("appwrite-session");
   } catch (error) {
-    console.log(error);
+    throw new Error(`${error}`)
   } finally {
     redirect("/sign-in");
   }

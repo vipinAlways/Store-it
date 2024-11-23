@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -102,7 +101,7 @@ const MobileNavigation = ({ fullname, email, accountId, ownerId }: porps) => {
             <Separator className="my-5 bg-light-200/20" />
 
             <div className="flex flex-col justify-between gap-5">
-              <FileUploader ownerId="" accountId={accountId} className="" />
+              <FileUploader ownerId={ownerId} accountId={accountId} className="" />
               <Button
                 className="sign-out-button"
                 onClick={async() => await signOutUser()}
