@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -23,22 +24,53 @@ import { Models } from "node-appwrite";
 import { actionsDropdownItems } from "@/constants";
 import Link from "next/link";
 import { constructFileUrl } from "@/lib/utils";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 const ActionDropDown = ({ file }: { file: Models.Document }) => {
   const [ismodalOpen, setIsmodalOpen] = useState(false);
+  const [isloading, setisloading] = useState(false);
   const [isDropDownOpen, setISDropDownOpen] = useState(false);
+  const [name, setName] = useState(file.name);
   const [action, setaction] = useState<ActionType | null>();
 
+
+  const closeAllmodel = ()=>{
+    setISDropDownOpen(false)
+    setIsmodalOpen(false)
+    setisloading(false)
+  }
+
   const renderDialogContent = () => {
+    if(!action) return null;
+
+    const {value,label} = action
     return (
       <DialogContent className="shad-dialog-button">
         <DialogHeader className="flex flex-col gap-3">
-          <DialogTitle className=" text-center to-light-100">Are you absolutely sure?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription>
+          <DialogTitle className=" text-center to-light-100">{label}</DialogTitle>
+              {
+                value ==='rename' && (
+                  <Input type="text" value={name} onChange={(e)=>setName(e.target.value)}/>
+                )
+              }
         </DialogHeader>
+
+        {
+          ['rename','delete','share'].includes(value) && (
+            <DialogFooter className="flex flex-col gap-3 md:flex-row">
+              <Button>
+                Cancel
+              </Button>
+              <Button>
+                <p className="capitalize">{value}</p>
+                {
+                  isloading && <Image src='/assets/icons/loader.svg' alt="load" width={24} height={24} className="animate-spin"/>
+                }
+              </Button>
+            </DialogFooter>
+          )
+        }
       </DialogContent>
     );
   };
