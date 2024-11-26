@@ -5,8 +5,15 @@ import Thumbnail from "./Thumbnail";
 import { convertFileSize } from "@/lib/utils";
 import ActionDropDown from "./ActionDropDown";
 import FormattedDateTime from "./FormattedDateTime";
+import { getCurrentUser } from "@/lib/action/user.action";
+import { redirect } from "next/navigation";
 
-const Card = ({ file }: { file: Models.Document }) => {
+const Card =async ({ file }: { file: Models.Document }) => {
+
+  const currentUser = await getCurrentUser()
+  if (!currentUser) {
+    return redirect('/sign-in')
+  } 
   return (
     <Link className="file-card" target="_blank" href={file.url}>
       <div className="flex justify-between">
@@ -18,7 +25,7 @@ const Card = ({ file }: { file: Models.Document }) => {
           extension={file.extension}
         />
         <div className="flex flex-col items-end justify-between">
-          <ActionDropDown file={file} />
+          <ActionDropDown file={file}  />
           <p className="body-1">{convertFileSize(file.size)}</p>
         </div>
       </div>

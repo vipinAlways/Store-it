@@ -87,3 +87,51 @@ export const getFiles = async () => {
     handleError(error, "failed to fetch file");
   }
 };
+
+
+export const updateFileUsers = async({fileId,emails,path}:UpdateFileUsersProps)=>{
+  const {dataBase} = await createAdminClient()
+ 
+
+  try {
+  
+    const updateFile = await dataBase.updateDocument(
+      appwriteConfig.dataBaseId,
+      appwriteConfig.fileCollectionId,
+      fileId,
+      {
+        users:emails
+      }
+    )
+
+    revalidatePath(path)
+
+    return parseStrinGify(updateFile)
+  } catch (error) {
+    handleError(error,'file to rename the file')
+  }
+}
+export const renameFile = async({fileId,name,extension,path}:RenameFileProps)=>{
+  const {dataBase} = await createAdminClient()
+ 
+
+  try {
+    const newName = `${name}.${extension}`
+    const updateFile = await dataBase.updateDocument(
+      appwriteConfig.dataBaseId,
+      appwriteConfig.fileCollectionId,
+      fileId,
+      {
+        name:newName
+      }
+    )
+
+    revalidatePath(path)
+
+    return parseStrinGify(updateFile)
+  } catch (error) {
+    handleError(error,'file to rename the file')
+  }
+}
+
+
