@@ -53,7 +53,7 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
 
       await Promise.all(uploadPromises)
     },
-    [ownerId, accountId, path]
+    [ownerId, accountId, path,toast]
   );
 
   const handleRemoveFile = (
