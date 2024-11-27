@@ -3,7 +3,7 @@
 import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
-import { parseStrinGify } from "../utils";
+import { parseStringify } from "../utils";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -62,7 +62,7 @@ export const createAccount = async ({
     );
   }
 
-  return parseStrinGify({ accountId });
+  return parseStringify({ accountId });
 };
 export const verifySecret = async ({
   accountId,
@@ -107,7 +107,7 @@ export const getCurrentUser = async () => {
     return null;
   }
  
-  return parseStrinGify(user.documents[0]);
+  return parseStringify(user.documents[0]);
 };
 
 export const signOutUser = async () => {
@@ -128,10 +128,10 @@ export const signIn = async ({ email }: { email: string }) => {
 
     if (existingUser) {
       await sendEmailOtp({ email });
-      return parseStrinGify({ accountId: existingUser.accountId });
+      return parseStringify({ accountId: existingUser.accountId });
     }
 
-    return parseStrinGify({ accountId: null, error: "user NOt Found" });
+    return parseStringify({ accountId: null, error: "user NOt Found" });
   } catch (error) {
     handleError(error, "failed to sign in user");
   }

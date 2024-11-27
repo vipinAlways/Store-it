@@ -79,7 +79,7 @@ const FileUploader = ({ ownerId, accountId }: Props) => {
       </Button>
 
       {files.length > 0 && (
-        <ul className="uloapder-preview-list">
+        <ul className="uploader-preview-list">
           <h4 className="h4 text-light-100">Uploading</h4>
 
           {files.map((file, index) => {
