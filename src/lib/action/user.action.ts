@@ -34,10 +34,10 @@ export const sendEmailOtp = async ({ email }: { email: string }) => {
   }
 };
 export const createAccount = async ({
-  fullname,
+  fullName,
   email,
 }: {
-  fullname: string;
+  fullName: string;
   email: string;
 }) => {
   const existingUser = await getUserByEmail(email);
@@ -53,7 +53,7 @@ export const createAccount = async ({
       appwriteConfig.userCollectionId,
       ID.unique(),
       {
-        fullname,
+        fullName,
         email,
         avatar:
           "https://imgs.search.brave.com/szCK7Kss3cXz4SKgich26tccJGXM6GcDheIvueNLlFE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAwLzY1Lzc3LzI3/LzM2MF9GXzY1Nzcy/NzE5X0ExVVY1a0xp/NW5DRVdJMEJOTExp/RmFCUEVrVWJ2NUZ2/LmpwZw",

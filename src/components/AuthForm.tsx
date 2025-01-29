@@ -52,7 +52,7 @@ const AuthForm = ({ type }: { type: formType }) => {
 
       if (type === "sign-up" && values.fullname !== undefined) {
         user = await createAccount({
-          fullname: values.fullname,
+          fullName: values.fullname,
           email: values.email,
         });
         return setAccountId(user.accountId);
