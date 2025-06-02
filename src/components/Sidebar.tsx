@@ -42,7 +42,7 @@ const Sidebar = ({fullname,email}:{fullname :string,email:string}) => {
                       height={24}
                       className={cn('nav-icon',active && 'nav-icon-active',)}
                       />
-                      <p className="hiddedn lg:block">{item.name}</p>
+                      <p className="hidden lg:block">{item.name}</p>
                     </li>
                 </Link>
               })
