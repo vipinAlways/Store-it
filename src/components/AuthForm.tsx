@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,6 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createAccount, signIn } from "@/lib/action/user.action";
 import OtpModel from "./OtpModel";
+import { useToast } from "@/hooks/use-toast";
 type formType = "sign-in" | "sign-up";
 
 const authForms = (formType: formType) => {
@@ -35,6 +36,7 @@ const AuthForm = ({ type }: { type: formType }) => {
   const [errorMessage, seterrorMessage] = useState("");
   const [accountId, setAccountId] = useState("");
   const formSchema = authForms(type);
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,10 +60,17 @@ const AuthForm = ({ type }: { type: formType }) => {
         return setAccountId(user.accountId);
       } else {
         const user = await signIn({ email: values.email });
-        return setAccountId(user.accountId);
+        if (user) {
+          return setAccountId(user.accountId);
+        } else {
+          toast({
+            title:"Check your email",
+            description: "We ar currently not able to find your account with this email",  
+            variant: "default",
+          })
+        }
       }
     } catch (error) {
-      
       seterrorMessage("failed to create acount");
     } finally {
       setIsLoading(false);
